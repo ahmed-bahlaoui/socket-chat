@@ -1,4 +1,6 @@
 
+#include <pthread.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,23 +10,26 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include "common.h"
+
 #define PORT 8080
-#define BUFFER_SIZE 1024
 
 int main(int argc, char *argv[]) {
     int client_fd;
     struct sockaddr_in server_addr;
+    pthread_t receiver_thread;
 
     char buffer[BUFFER_SIZE];
-    ssize_t bytes_received;
 
-    // 1. Check command-line arguments
+    signal(SIGPIPE, SIG_IGN);
+
+    // 1. Check arguments
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <server_ip>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    // 2. Create TCP socket
+    // 2. Create socket
     client_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (client_fd == -1) {
@@ -39,7 +44,7 @@ int main(int argc, char *argv[]) {
     server_addr.sin_port = htons(PORT);
 
     if (inet_pton(AF_INET, argv[1], &server_addr.sin_addr) != 1) {
-        fprintf(stderr, "Invalid server IP address\n");
+        fprintf(stderr, "Invalid IP address\n");
         close(client_fd);
         return EXIT_FAILURE;
     }
@@ -54,32 +59,44 @@ int main(int argc, char *argv[]) {
     }
 
     printf("[CLIENT] Connected successfully!\n");
+    printf("[CHAT] Type /quit to disconnect.\n\n");
 
-    // 5. Send a message
-    const char *message = "Hello from client!\n";
-
-    if (send(client_fd, message, strlen(message), 0) == -1) {
-        perror("send");
+    // 5. Start receiver thread
+    if (pthread_create(&receiver_thread, NULL, receive_messages, &client_fd) != 0) {
+        perror("pthread_create");
         close(client_fd);
         return EXIT_FAILURE;
     }
 
-    printf("[CLIENT] Message sent: %s", message);
+    // 6. Read and send messages
+    while (1) {
 
-    // 6. Receive response
-    bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+        printf("You: ");
+        fflush(stdout);
 
-    if (bytes_received > 0) {
-        buffer[bytes_received] = '\0';
-        printf("[SERVER] %s", buffer);
-    } else if (bytes_received == 0) {
-        printf("[CLIENT] Server disconnected.\n");
-    } else {
-        perror("recv");
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+            break;
+
+        if (strcmp(buffer, "/quit\n") == 0 || strcmp(buffer, "/quit") == 0) {
+            printf("[CLIENT] Disconnecting...\n");
+            break;
+        }
+
+        if (send_all(client_fd, buffer, strlen(buffer)) == -1) {
+            perror("send");
+            break;
+        }
     }
 
-    // 7. Close socket
+    // 7. Stop communication
+    shutdown(client_fd, SHUT_RDWR);
+
+    pthread_join(receiver_thread, NULL);
+
+    // 8. Close socket
     close(client_fd);
+
+    printf("[CLIENT] Disconnected.\n");
 
     return EXIT_SUCCESS;
 }

@@ -1,0 +1,74 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Create build directory",
+            "type": "process",
+            "command": "C:\\cygwin64\\bin\\mkdir.exe",
+            "args": [
+                "-p",
+                "${workspaceFolder}\\build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build server",
+            "type": "process",
+            "command": "C:\\cygwin64\\bin\\gcc.exe",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-std=c11",
+                "-pthread",
+                "-Iinclude",
+                "server\\server.c",
+                "-o",
+                "build\\server.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Create build directory",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Builds the server executable."
+        },
+        {
+            "label": "Build client",
+            "type": "process",
+            "command": "C:\\cygwin64\\bin\\gcc.exe",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-std=c11",
+                "-pthread",
+                "-Iinclude",
+                "client\\client.c",
+                "-o",
+                "build\\client.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Create build directory",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Builds the client executable."
+        },
+        {
+            "label": "Build all C files",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build server",
+                "Build client"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
