@@ -3,17 +3,18 @@
         {
             "name": "Win32 -  cygwin64",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/cygwin64/usr/include",
+                "C:/cygwin64/usr/include/w32api"
             ],
             "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
+                "__CYGWIN__",
+                "_WIN32"
             ],
             "compilerPath": "C:\\cygwin64\\bin\\gcc.exe",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

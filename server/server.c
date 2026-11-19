@@ -19,11 +19,13 @@ int main(void) {
     int server_fd;
     int client_fd;
 
+    // Definition des addresses serveur et client
     struct sockaddr_in server_addr;
     struct sockaddr_in client_addr;
 
     socklen_t client_len = sizeof(client_addr);
 
+    // Classification
     pthread_t receiver_thread;
 
     char buffer[BUFFER_SIZE];
