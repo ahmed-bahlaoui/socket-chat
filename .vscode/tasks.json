@@ -8,6 +8,55 @@
     },
     "tasks": [
         {
+            "label": "Build Server CLI (Cygwin)",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "server/server.c",
+                "-o",
+                "build/cli/server.exe",
+                "-lpthread"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build Client CLI (Cygwin)",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-Iinclude",
+                "client/client.c",
+                "-o",
+                "build/cli/client.exe",
+                "-lpthread"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build All Plain CLI",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "Build Client CLI (Cygwin)",
+                "Build Server CLI (Cygwin)"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Build Server GUI (Cygwin)",
             "type": "shell",
             "command": "gcc",

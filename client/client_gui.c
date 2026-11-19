@@ -209,7 +209,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             CreateWindowA("STATIC", "User:", WS_VISIBLE | WS_CHILD, 242, 18, 38, 22, hwnd, NULL, NULL, NULL);
         SendMessage(hLblName, WM_SETFONT, (WPARAM)hFontUI, TRUE);
 
-        hEditName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "Alice", WS_VISIBLE | WS_CHILD, 282, 15, 85, 25, hwnd,
+        hEditName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "Ahmed", WS_VISIBLE | WS_CHILD, 282, 15, 85, 25, hwnd,
                                     (HMENU)ID_EDIT_NAME, NULL, NULL);
         SendMessage(hEditName, WM_SETFONT, (WPARAM)hFontUI, TRUE);
 
